@@ -68,3 +68,17 @@ _ul( [ 'class' =>  [ 'no-bullet', 'sidebar-links' ] ], function () {
   endwhile;
 });
 ```
+
+```php
+_div([ 'class' => 'event-meta' ], [
+    __p([ 'class' => 'event-date' ], function ($expect) {
+        date( 'm.j', $expect( get_field( 'start_date' ) ) );
+    }),
+    __p([ 'class' => 'event-time' ], function ($expect) {
+      echo implode(' - ', array_unique([
+          strtoupper( date( 'g:ia', $expect( get_field( 'start_time' ) ) ) ),
+          strtoupper( date( 'g:ia', $expect( get_field( 'end_time' ) ) ) ),
+        ]));
+    })
+]);
+```
