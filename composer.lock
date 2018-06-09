@@ -1,0 +1,46 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "f461f7beb0ce11e87844c27e5f1229d1",
+    "packages": [
+        {
+            "name": "rchipka/context",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rchipka/php-context.git",
+                "reference": "f1811942127aabaa5a23f9ea0f90e27715cbc649"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rchipka/php-context/zipball/f1811942127aabaa5a23f9ea0f90e27715cbc649",
+                "reference": "f1811942127aabaa5a23f9ea0f90e27715cbc649",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "Context.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "time": "2018-06-09T20:28:09+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "rchipka/context": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
