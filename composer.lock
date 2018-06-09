@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bd2b2e4aee0bc8e881c8813a4afe8361",
+    "content-hash": "909f4c52ae311b3de652e3db979371ed",
     "packages": [
         {
             "name": "rchipka/context",
