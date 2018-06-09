@@ -1,11 +1,11 @@
 {
     "name": "rchipka/tagbuilder",
-    "version": "0.0.3",
+    "version": "1.0.3",
     "license": "MIT",
     "autoload": {
         "files": ["TagBuilder.php"]
     },
     "require": {
-        "rchipka/context": "dev-master"
+        "rchipka/context": "0.0.3"
     }
 }
