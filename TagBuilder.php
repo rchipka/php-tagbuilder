@@ -41,10 +41,6 @@ function vbtk_tag_builder($tag, $attrs = [], $children = []) {
     $attributes[] = $key . '="' . esc_attr($value) . '"';
   }
 
-  $context = new Context(array_merge([$tag], $attrs['class'] ?: []));
-
-  $context->enter();
-
   if (sizeof($attrs) === 1) {
     if (is_numeric($attrs[0]) || is_bool($attrs[0])) {
       if (!$attrs[0]) {
@@ -132,8 +128,6 @@ function vbtk_tag_builder($tag, $attrs = [], $children = []) {
       $out .= '</' . $tag . '>';
     }
   }
-
-  $context->exit();
 
   return $out;
 }

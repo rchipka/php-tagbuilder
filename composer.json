@@ -4,8 +4,5 @@
     "license": "MIT",
     "autoload": {
         "files": ["TagBuilder.php"]
-    },
-    "require": {
-        "rchipka/context": "dev-master"
     }
 }
