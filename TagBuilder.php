@@ -68,31 +68,60 @@ function vbtk_tag_builder($tag, $attrs = [], $children = []) {
       $failed = false;
 
       try {
-        $fail = function ($value = false, $expected = true) use (&$false_children, &$failed) {
-          if (is_callable($expected)) {
-            $expected = $expected($value);
-          }
+        try {
+          $fail = function ($value = false, $expected = true) use (&$false_children, &$failed) {
+            if (is_callable($expected)) {
+              $expected = $expected($value);
+            }
 
-          if (!$failed && $value != $expected) {
-            error_log(json_encode($value) . ' != ' . json_encode($expected));
-            $failed = true;
-            $false_children++;
-          } else {
+            if (!$failed && $value != $expected) {
+              error_log(json_encode($value) . ' != ' . json_encode($expected));
+              $failed = true;
+              $false_children++;
+            } else {
 
-            error_log(json_encode($value) . ' == ' . json_encode($expected));
-          }
+              error_log(json_encode($value) . ' == ' . json_encode($expected));
+            }
 
-          return $value;
-        };
+            return $value;
+          };
 
-        $child = $child($fail);
-      } catch (\Error $e) {
-        $child = '<code>';
-        $child .= $e->getMessage() . "\n\n";
-        $child .= '</code><br/>';
-        $child .= '<code style="font-size:0.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;width:100%;overflow-x:scroll;">';
-        $child .= nl2br(str_replace('wp-content/', '',str_replace(getcwd(), '/',  $e->getTraceAsString())));
-        $child .= '</code>';
+          $child = $child($fail);
+        } catch (\Error $e) {
+          $child = implode(' ', [
+            '<script>(function () {',
+            'var scripts = document.getElementsByTagName("script"),',
+            'currentScript = scripts[scripts.length - 1];',
+            'console.error(currentScript.parentNode);',
+            'var e = new Error(',
+             json_encode($e->getMessage() . "\n\n" . str_replace('wp-content/', '',str_replace(getcwd(), '',  $e->getTraceAsString()))),
+             ', ',
+             json_encode($e->getFile()),
+             ', ',
+             json_encode($e->getLine()),
+             ', ',
+            ');',
+            'throw e;',
+            '})();',
+            '</script>']);
+        }
+      } catch (\Exception $e) {
+        $child = implode(' ', [
+          '<script>(function () {',
+          'var scripts = document.getElementsByTagName("script"),',
+          'currentScript = scripts[scripts.length - 1];',
+          'console.error(currentScript.parentNode);',
+          'var e = new Error(',
+           json_encode($e->getMessage() . "\n\n" . str_replace('wp-content/', '',str_replace(getcwd(), '',  $e->getTraceAsString()))),
+           ', ',
+           json_encode($e->getFile()),
+           ', ',
+           json_encode($e->getLine()),
+           ', ',
+          ');',
+          'throw e;',
+          '})();',
+          '</script>']);
       }
 
       if (!$failed) {
