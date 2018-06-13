@@ -3,6 +3,67 @@ if (function_exists('vbtk_tag_builder')) {
   return;
 }
 
+function generate_js_error($e) {
+  $pad_right = 1;
+  $err_line = $e->getLine();
+  $err_file = $e->getFile();
+
+  $prev_lines = 3;
+  $next_lines = 3;
+
+  $excerpt = '';
+
+  if (is_readable($err_file)) {
+    $file = file($err_file);
+    $lines = array();
+    $padding = 10;
+
+    for ($i = max(0, $err_line - 1 - $prev_lines); $i < $err_line + $next_lines; $i++) {
+      $line = preg_replace('/\t/', '  ', $file[$i]);
+      $count++;
+
+      preg_match('/^ +/', $line, $matches);
+
+      error_log(json_encode($matches));
+      $line_padding = strlen($matches[0]);
+
+      if ($line_padding > 0 && $line_padding < $padding) {
+        $padding = $line_padding;
+      }
+
+      $line = str_pad(($i + 1) . ':', 5, ' ', $pad_right) . $line;
+
+      if ($i == $err_line - 1) {
+        $line = "\n" . $line . "\n";
+      }
+
+      array_push($lines, $line);
+    }
+
+    error_log('line pad' . $padding);
+    if (sizeof($lines > 0)) {
+      $excerpt = "\n\n" . implode('', preg_replace('/:\\s{' . $padding .'}/', ': ', $lines));
+    }
+  }
+
+  return implode(' ', [
+            '<script>(function () {',
+            'var scripts = document.getElementsByTagName("script"),',
+            'currentScript = scripts[scripts.length - 1];',
+            'console.error(currentScript.parentNode);',
+            'var e = new Error(',
+             json_encode($e->getMessage() . $excerpt . "\n\n" . str_replace('wp-content/', '',str_replace(getcwd(), '',  $e->getTraceAsString()))),
+             ', ',
+             json_encode($e->getFile()),
+             ', ',
+             json_encode($e->getLine()),
+             ', ',
+            ');',
+            'throw e;',
+            '})();',
+            '</script>']);;
+}
+
 function vbtk_tag_builder($tag, $attrs = [], $children = []) {
   // TODO: add filters, add context
 
@@ -88,40 +149,10 @@ function vbtk_tag_builder($tag, $attrs = [], $children = []) {
 
           $child = $child($fail);
         } catch (\Error $e) {
-          $child = implode(' ', [
-            '<script>(function () {',
-            'var scripts = document.getElementsByTagName("script"),',
-            'currentScript = scripts[scripts.length - 1];',
-            'console.error(currentScript.parentNode);',
-            'var e = new Error(',
-             json_encode($e->getMessage() . "\n\n" . str_replace('wp-content/', '',str_replace(getcwd(), '',  $e->getTraceAsString()))),
-             ', ',
-             json_encode($e->getFile()),
-             ', ',
-             json_encode($e->getLine()),
-             ', ',
-            ');',
-            'throw e;',
-            '})();',
-            '</script>']);
+          $child = generate_js_error($e);
         }
       } catch (\Exception $e) {
-        $child = implode(' ', [
-          '<script>(function () {',
-          'var scripts = document.getElementsByTagName("script"),',
-          'currentScript = scripts[scripts.length - 1];',
-          'console.error(currentScript.parentNode);',
-          'var e = new Error(',
-           json_encode($e->getMessage() . "\n\n" . str_replace('wp-content/', '',str_replace(getcwd(), '',  $e->getTraceAsString()))),
-           ', ',
-           json_encode($e->getFile()),
-           ', ',
-           json_encode($e->getLine()),
-           ', ',
-          ');',
-          'throw e;',
-          '})();',
-          '</script>']);
+        $child = generate_js_error($e);
       }
 
       if (!$failed) {
