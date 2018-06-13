@@ -27,16 +27,26 @@ function vbtk_tag_builder($tag, $attrs = [], $children = []) {
 
   $attributes = [];
 
-  foreach ($attrs as $key => $value) {
+  foreach ($attrs as $key => $value) {    
+    if (is_callable($value)) {
+      $value = $value();
+    }
+
     if (is_array($value)) {
+      foreach ($value as $i => $v) {
+        if (is_callable($v)) {
+          $value[$i] = $v();
+        }
+      }
+
       $value = implode(' ', array_filter($value));
     }
 
-    $value = trim(preg_replace('/\\s{2,}/', ' ', $value));
-
-    if (!$value) {
+    if (is_bool($value) && !$value) {
       continue;
     }
+
+    $value = trim(preg_replace('/\\s{2,}/', ' ', $value));
 
     $attributes[] = $key . '="' . esc_attr($value) . '"';
   }
