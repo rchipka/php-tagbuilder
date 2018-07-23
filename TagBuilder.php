@@ -67,7 +67,7 @@ function generate_js_error($e) {
 function vbtk_tag_builder($tag, $attrs = [], $children = []) {
   // TODO: add filters, add context
 
-  $GLOBALS['vbtk_tag_builder_depth']++;
+  // $GLOBALS['vbtk_tag_builder_depth']++;
 
   if (is_string($attrs)) {
     $attrs = [ 'class' => $attrs ];
@@ -109,10 +109,14 @@ function vbtk_tag_builder($tag, $attrs = [], $children = []) {
 
     $value = trim(preg_replace('/\\s{2,}/', ' ', $value));
 
-    $attributes[] = $key . '="' . esc_attr($value) . '"';
+    if (is_callable('esc_attr')) {
+      $value = esc_attr($value);
+    }
+
+    $attributes[] = $key . '="' . $value . '"';
   }
 
-  if (sizeof($attrs) === 1) {
+  if (sizeof($attrs) === 1 && isset($attrs[0])) {
     if (is_numeric($attrs[0]) || is_bool($attrs[0])) {
       if (!$attrs[0]) {
         return '';
